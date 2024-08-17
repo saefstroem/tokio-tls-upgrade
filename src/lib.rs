@@ -16,7 +16,7 @@ mod tests {
     use std::sync::Arc;
     use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
     use tokio::net::{TcpListener, TcpStream};
-    use tokio::sync::oneshot;
+    use tokio::sync::oneshot::{Sender,channel};
     use tokio_rustls::TlsConnector;
 
     // Start a TLS server that listens on the given address and port
@@ -24,7 +24,7 @@ mod tests {
         certificate_path: PathBuf,
         key_path: PathBuf,
         addr: &str,
-        tx: oneshot::Sender<u8>,
+        tx: Sender<u8>,
     ) -> io::Result<()> {
         let listener = TcpListener::bind(addr).await?;
 
@@ -93,8 +93,6 @@ mod tests {
 
     #[tokio::test]
     async fn test_tls_upgrade() {
-        env_logger::builder().is_test(true).init();
-
         // Generate self-signed certificate
         let subject_alt_names = vec!["localhost".to_string()];
         let alg = &rcgen::PKCS_RSA_SHA512;
@@ -118,7 +116,7 @@ mod tests {
         let server_addr = "127.0.0.1:5001";
 
         // Create a channel to communicate with the server
-        let (tx, rx) = oneshot::channel();
+        let (tx, rx) = channel();
 
         // Start server in background that runs on TLS
         let server = tokio::spawn(async move {

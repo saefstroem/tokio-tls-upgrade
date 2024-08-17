@@ -34,7 +34,7 @@ For production use, you should obtain a certificate from a trusted certificate a
     use rustls::pki_types::{CertificateDer, ServerName};
     use rustls::{Error as TlsError,ClientConfig,DigitallySignedStruct, SignatureScheme};
     use rustls_pemfile::certs;
-    use tokio::sync::oneshot;
+    use tokio::sync::oneshot::{channel,Sender};
     use std::fs::{remove_file, File};
     use std::io::{Write,BufReader};
     use std::path::PathBuf;
@@ -42,14 +42,14 @@ For production use, you should obtain a certificate from a trusted certificate a
     use tokio::io::{self,AsyncReadExt,AsyncWriteExt};
     use tokio::net::{TcpListener, TcpStream};
     use tokio_rustls::TlsConnector;
-    use tlsupgrade::upgrade_tcp_stream;
+    use tokio_tls_upgrade::upgrade_tcp_stream;
 
     // Start a TLS server that listens on the given address and port
     async fn start_tls_server(
         certificate_path: PathBuf,
         key_path: PathBuf,
         addr: &str,
-        tx:oneshot::Sender<u8>
+        tx:Sender<u8>
     ) -> io::Result<()> {
         let listener = TcpListener::bind(addr).await?;
 
@@ -142,7 +142,7 @@ For production use, you should obtain a certificate from a trusted certificate a
         let server_addr = "127.0.0.1:5001";
 
         // Create a channel to communicate with the server
-        let (tx, rx) = oneshot::channel();
+        let (tx, rx) = channel();
 
         // Start server in background that runs on TLS
         let server = tokio::spawn(async move {
