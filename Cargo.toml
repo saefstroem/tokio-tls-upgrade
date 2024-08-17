@@ -2,6 +2,12 @@
 name = "tokio-tls-upgrade"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "Upgrade a TCP stream to a TLS stream using certificates and keys in PEM format."
+repository = "https://github.com/starkbamse/tokio-tls-upgrade"
+keywords = ["network", "tls", "tcp","stream","tokio"]
+categories = ["network-programming"]
+
 
 [dependencies]
 log = "0.4.22"

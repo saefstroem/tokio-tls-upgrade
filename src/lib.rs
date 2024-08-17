@@ -1,7 +1,11 @@
 mod certificates;
 mod upgrade;
 
+/**
+ * This function upgrades a `tokio::net::TcpStream` to a `tokio_rustls::server::TlsStream` using a provided certificate chain/certificate and key file.
+ */
 pub use upgrade::upgrade_tcp_stream;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -16,7 +20,7 @@ mod tests {
     use std::sync::Arc;
     use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
     use tokio::net::{TcpListener, TcpStream};
-    use tokio::sync::oneshot::{Sender,channel};
+    use tokio::sync::oneshot::{channel, Sender};
     use tokio_rustls::TlsConnector;
 
     // Start a TLS server that listens on the given address and port
